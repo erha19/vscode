@@ -13851,6 +13851,7 @@ declare module 'vscode' {
 		 */
 		export function registerInlineCompletionItemProvider(selector: DocumentSelector, provider: InlineCompletionItemProvider): Disposable;
 
+		export function getCurrentInlineCompletions(): any[] | undefined;
 		/**
 		 * Register a code action provider.
 		 *

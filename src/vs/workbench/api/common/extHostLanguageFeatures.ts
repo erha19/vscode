@@ -2331,8 +2331,17 @@ export class ExtHostLanguageFeatures implements extHostProtocol.ExtHostLanguageF
 		return this._createDisposable(handle);
 	}
 
-	$provideInlineCompletions(handle: number, resource: UriComponents, position: IPosition, context: languages.InlineCompletionContext, token: CancellationToken): Promise<extHostProtocol.IdentifiableInlineCompletions | undefined> {
-		return this._withAdapter(handle, InlineCompletionAdapterBase, adapter => adapter.provideInlineCompletions(URI.revive(resource), position, context, token), undefined, token);
+	private _currentComplection: extHostProtocol.IdentifiableInlineCompletions | undefined;
+
+	getCurrentInlineCompletions() {
+		return this._currentComplection;
+	}
+
+	async $provideInlineCompletions(handle: number, resource: UriComponents, position: IPosition, context: languages.InlineCompletionContext, token: CancellationToken): Promise<extHostProtocol.IdentifiableInlineCompletions | undefined> {
+		this._currentComplection = undefined;
+		const complection = await this._withAdapter(handle, InlineCompletionAdapterBase, adapter => adapter.provideInlineCompletions(URI.revive(resource), position, context, token), undefined, token);
+		this._currentComplection = complection;
+		return complection;
 	}
 
 	$handleInlineCompletionDidShow(handle: number, pid: number, idx: number, updatedInsertText: string): void {
